@@ -1,0 +1,6 @@
+span-marker
+rank_bm25
+llama-index==0.10.13
+openai
+streamlit
+pandas
