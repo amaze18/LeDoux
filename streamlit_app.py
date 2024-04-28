@@ -6,7 +6,8 @@ from llama_index.legacy.retrievers import VectorIndexRetriever
 from llama_index.legacy.retrievers import BaseRetriever
 from llama_index.legacy.chat_engine import CondensePlusContextChatEngine
 from llama_index.legacy.query_engine import RetrieverQueryEngine
-from llama_index.legacy.postprocessor import LongContextReorder 
+from llama_index.legacy.postprocessor import LongContextReorder
+from llama_index.legacy.embeddings import OpenAIEmbedding
 import openai
 import os
 from index import indexgenerator
@@ -46,7 +47,9 @@ class HybridRetriever(BaseRetriever):
         return all_nodes
 hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
 llm = OpenAI(model="gpt-4-1106-preview")
-service_context = ServiceContext.from_defaults(llm=llm)
+#service_context = ServiceContext.from_defaults(llm=llm)
+embed_model = OpenAIEmbedding(model="text-embedding-3-large")
+service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine)
