@@ -13,10 +13,10 @@ from index import indexgenerator
 
 st.set_page_config(page_title="Chat with a book, powered by AIXplorers", page_icon="✅", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = os.environ['SECRET_TOKEN']
-st.title("Chat with FinTech for Billions, powered by [AIXplorers](https://anupam-purwar.github.io/page/research_group.html)!! 💬")
+st.title("Chat with The Four Realms of Existence!! 💬")
 
 with st.sidebar:
-    st.title('🤗💬FinTech for Billions @ Chat Bot')
+    st.title('🤗💬The Four Realms of Existence @ Chat Bot')
     st.success('Access to this Gen-AI Powered Chatbot is provided by  [Anupam](https://www.linkedin.com/in/anupamisb/)!!', icon='✅')
     hf_email = 'anupam_purwar2019@pgp.isb.edu'
     hf_pass = 'PASS'
@@ -45,7 +45,6 @@ class HybridRetriever(BaseRetriever):
         all_nodes = bm25_nodes + vector_nodes
         return all_nodes
 hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
-#llm = OpenAI(model="gpt-3.5-turbo")
 llm = OpenAI(model="gpt-4-1106-preview")
 service_context = ServiceContext.from_defaults(llm=llm)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
