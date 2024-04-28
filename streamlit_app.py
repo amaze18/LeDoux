@@ -30,8 +30,8 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
 indexPath=r"large_pdf_index"
 documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 index=indexgenerator(indexPath,documentsPath)
-vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=2)
-bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=8)
+bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=4)
 postprocessor = LongContextReorder()
 class HybridRetriever(BaseRetriever):
     def __init__(self,vector_retriever, bm25_retriever):
@@ -45,7 +45,8 @@ class HybridRetriever(BaseRetriever):
         all_nodes = bm25_nodes + vector_nodes
         return all_nodes
 hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
-llm = OpenAI(model="gpt-3.5-turbo")
+#llm = OpenAI(model="gpt-3.5-turbo")
+llm = OpenAI(model="gpt-4-1106-preview")
 service_context = ServiceContext.from_defaults(llm=llm)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
