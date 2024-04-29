@@ -22,12 +22,19 @@ DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
   The following is a friendly conversation between a user and an AI assistant.
   The assistant is talkative and provides lots of specific details from its context only.
   Here are the relevant documents for the context:
-
   {context_str}
-
   Instruction: Based on the above context, provide a detailed answer with logical formation of paragraphs for the user question below.
   Answer "don't know" if information is not present in context. Also, decline to answer questions that are not related to context."
   """
+
+DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
+ You're an AI assistant to help students learn their course material via convertsations.
+ The following is a friendly conversation between a user and an AI assistant for answering questions related to query.
+ The assistant is talkative and provides lots of specific details in form of bullet points or short paras from the context.
+ Here is the relevant context:
+ {context_str}
+ Instruction: Based on the above context, provide a detailed answer IN THE USER'S LANGUAGE with logical formation of paragraphs for the user question below.
+ """
 
 with st.sidebar:
     st.title('🤗💬The Four Realms of Existence @ Chat Bot')
