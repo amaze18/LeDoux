@@ -84,7 +84,8 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             all_nodes  = hybrid_retriever.retrieve(str(prompt))
-            response = st.session_state.chat_engine.chat(prompt)
+            response = st.session_state.chat_engine.chat(str(prompt))
+            #response = st.session_state.chat_engine.chat(prompt)
             st.write(response.response)
             context_str = "\n\n".join([n.node.get_content(metadata_mode=MetadataMode.LLM).strip() for n in all_nodes])
             message = {"role": "assistant", "content": response.response}
