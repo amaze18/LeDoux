@@ -52,7 +52,7 @@ class HybridRetriever(BaseRetriever):
         return all_nodes
 hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
 llm = OpenAI(model="gpt-4-1106-preview") 
-llm = OpenAI(model="gpt-4-0125-preview")
+#llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 service_context = ServiceContext.from_defaults(llm=OpenAI(model=m[1], temperature=0),embed_model=embed_model)
