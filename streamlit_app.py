@@ -30,12 +30,13 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
     ]
 
 indexPath=r"large_pdf_index"
+m=["gpt-4-1106-preview","gpt-4-0125-preview"]
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
 #index=indexgenerator(indexPath,documentsPath)
-vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=7)
+vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=6)
 bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
 postprocessor = LongContextReorder()
 class HybridRetriever(BaseRetriever):
@@ -50,10 +51,11 @@ class HybridRetriever(BaseRetriever):
         all_nodes = bm25_nodes + vector_nodes
         return all_nodes
 hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
-llm = OpenAI(model="gpt-4-1106-preview")
+llm = OpenAI(model="gpt-4-1106-preview") 
+llm = OpenAI(model="gpt-4-0125-preview")
 #service_context = ServiceContext.from_defaults(llm=llm)
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
-service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model)
+service_context = ServiceContext.from_defaults(llm=OpenAI(model=m[1], temperature=0),embed_model=embed_model)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine)
