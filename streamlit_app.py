@@ -36,7 +36,7 @@ storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
 #index=indexgenerator(indexPath,documentsPath)
 vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=6)
-bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=4)
 postprocessor = LongContextReorder()
 class HybridRetriever(BaseRetriever):
     def __init__(self,vector_retriever, bm25_retriever):
