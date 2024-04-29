@@ -8,6 +8,7 @@ from llama_index.legacy.chat_engine import CondensePlusContextChatEngine
 from llama_index.legacy.query_engine import RetrieverQueryEngine
 from llama_index.legacy.postprocessor import LongContextReorder
 from llama_index.legacy.embeddings import OpenAIEmbedding
+from llama_index.legacy import (StorageContext,load_index_from_storage)
 import openai
 import os
 from index import indexgenerator
