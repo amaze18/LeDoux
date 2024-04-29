@@ -29,8 +29,10 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
     ]
 
 indexPath=r"large_pdf_index"
-documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
-index=indexgenerator(indexPath,documentsPath)
+#documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
+storage_context = StorageContext.from_defaults(persist_dir=indexPath)
+index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
+#index=indexgenerator(indexPath,documentsPath)
 vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=8)
 bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=4)
 postprocessor = LongContextReorder()
