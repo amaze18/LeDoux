@@ -17,6 +17,17 @@ st.set_page_config(page_title="Chat with a book, powered by AIXplorers", page_ic
 openai.api_key = os.environ['SECRET_TOKEN']
 st.title("Chat with The Four Realms of Existence!! 💬")
 
+DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
+  The following is a friendly conversation between a user and an AI assistant.
+  The assistant is talkative and provides lots of specific details from its context only.
+  Here are the relevant documents for the context:
+
+  {context_str}
+
+  Instruction: Based on the above context, provide a detailed answer with logical formation of paragraphs for the user question below.
+  Answer "don't know" if information is not present in context. Also, decline to answer questions that are not related to context."
+  """
+
 with st.sidebar:
     st.title('🤗💬The Four Realms of Existence @ Chat Bot')
     st.success('Access to this Gen-AI Powered Chatbot is provided by  [Anupam](https://www.linkedin.com/in/anupamisb/)!!', icon='✅')
@@ -58,7 +69,7 @@ embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 service_context = ServiceContext.from_defaults(llm=OpenAI(model=m[1], temperature=0),embed_model=embed_model)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine)
+        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE)
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -71,7 +82,10 @@ for message in st.session_state.messages: # Display the prior chat messages
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
+            all_nodes  = hybrid_retriever.retrieve(str(prompt))
             response = st.session_state.chat_engine.chat(prompt)
             st.write(response.response)
+            context_str = "\n\n".join([n.node.get_content(metadata_mode=MetadataMode.LLM).strip() for n in all_nodes])
             message = {"role": "assistant", "content": response.response}
+            
             st.session_state.messages.append(message) # Add response to message history
