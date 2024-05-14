@@ -16,7 +16,7 @@ from index import indexgenerator
 
 st.set_page_config(page_title="Chat with a book, powered by AIXplorers", page_icon="✅", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = os.environ['SECRET_TOKEN']
-st.title("Chat with The Four Realms of Existence!! 💬")
+st.title("Chat with F2B!! 💬")
 
 
 
@@ -39,7 +39,7 @@ DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
   """
 
 with st.sidebar:
-    st.title('🤗💬The Four Realms of Existence @ Chat Bot')
+    st.title('🤗💬F2B @ Chat Bot')
     st.success('Access to this Gen-AI Powered Chatbot is provided by  [Anupam](https://www.linkedin.com/in/anupamisb/)!!', icon='✅')
     hf_email = 'anupam_purwar2019@pgp.isb.edu'
     hf_pass = 'PASS'
@@ -50,7 +50,7 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
         {"role": "assistant", "content": "Ask me a question from the book!!"}
     ]
 
-indexPath=r"large_pdf_index"
+indexPath=r"F2B"
 m=["gpt-4-1106-preview","gpt-4-0125-preview"]
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
