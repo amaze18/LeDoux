@@ -50,9 +50,12 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
         {"role": "assistant", "content": "Ask me a question from the book!!"}
     ]
 
+if "message_history" not in st.session_state.keys():
+    st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question from the book!!"),]
+
 indexPath=r"large_pdf_index"
 m=["gpt-4-1106-preview","gpt-4-0125-preview"]
-embed_model = OpenAIEmbedding(model="text-embedding-3-large")
+embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
@@ -62,16 +65,21 @@ bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
 postprocessor = LongContextReorder()
 class HybridRetriever(BaseRetriever):
     def __init__(self,vector_retriever, bm25_retriever):
-        self.vector_retriever_2000 = vector_retriever
-        self.bm25_retriever_2000 = bm25_retriever
+        self.vector_retriever = vector_retriever
+        self.bm25_retriever = bm25_retriever
         super().__init__()
 
     def _retrieve(self, query, **kwargs):
-        bm25_nodes = self.bm25_retriever_2000.retrieve(query, **kwargs)
-        vector_nodes = self.vector_retriever_2000.retrieve(query, **kwargs)
+        bm25_nodes = self.bm25_retriever.retrieve(query, **kwargs)
+        vector_nodes = self.vector_retriever.retrieve(query, **kwargs)
         all_nodes = bm25_nodes + vector_nodes
-        return all_nodes
-hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+        query = str(query)
+        all_nodes = postprocessor.postprocess_nodes(nodes=all_nodes,query_bundle=QueryBundle(query_str=query.lower()))
+        return all_nodes[0:topk]
+ if bm25_flag:
+        hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+    else:
+        hybrid_retriever=vector_retriever
 llm = OpenAI(model="gpt-4-1106-preview") 
 #llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
@@ -93,9 +101,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             all_nodes  = hybrid_retriever.retrieve(str(prompt))
-            #response = st.session_state.chat_engine.chat(str(prompt))
-            response = st.session_state.chat_engine.chat(prompt)
+            response = st.session_state.chat_engine.chat(str(prompt))
+            #response = st.session_state.chat_engine.chat(prompt)
             st.write(response.response)
             context_str = "\n\n".join([n.node.get_content(metadata_mode=MetadataMode.LLM).strip() for n in all_nodes])
+            st.session_state.message_history.append(ChatMessage(role=MessageRole.ASSISTANT,content=str(response.response)),)
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
