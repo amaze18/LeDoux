@@ -53,7 +53,7 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
 if "message_history" not in st.session_state.keys():
     st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question from the book!!"),]
 
-indexPath=r"large_pdf_index"
+indexPath=r"LeDou"
 m=["gpt-4-1106-preview","gpt-4-0125-preview"]
 embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
