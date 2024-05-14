@@ -1,3 +1,6 @@
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
 import streamlit as st
 from llama_index.legacy import ServiceContext
 from llama_index.legacy.llms import OpenAI
