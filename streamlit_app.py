@@ -99,7 +99,8 @@ else:
 llm = OpenAI("gpt-4o") 
 #llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
-embed_model = OpenAIEmbedding(model="text-embedding-3-large")
+#embed_model = OpenAIEmbedding(model="text-embedding-3-large")
+embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 service_context = ServiceContext.from_defaults(llm=OpenAI("gpt-4o"))
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
