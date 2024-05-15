@@ -112,14 +112,14 @@ embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 service_context = ServiceContext.from_defaults(llm=OpenAI("gpt-4o"))
 message_history=[]
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
-if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
+#if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         #response = CondensePlusContextChatEngine.from_defaults(llm=llm,retriever=hybrid_retriever,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE,condense_prompt=condense_prompt,\
         #                                                              chat_history= message_history).chat(query_str)
         #query_str=prompt
         #message_history.append(ChatMessage(role=MessageRole.USER,content=query_str))
         #st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
                                                       #                 chat_history= message_history).chat(query_str)
-        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
+        #st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
 
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
