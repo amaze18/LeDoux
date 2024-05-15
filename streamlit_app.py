@@ -1,6 +1,6 @@
 import streamlit as st
 from llama_index.legacy import ServiceContext
-from llama_index.legacy.llms import OpenAI
+from llama_index.llms.openai import OpenAI
 from llama_index.legacy.retrievers import BM25Retriever
 from llama_index.legacy.retrievers import VectorIndexRetriever
 from llama_index.legacy.retrievers import BaseRetriever
