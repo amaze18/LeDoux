@@ -76,9 +76,9 @@ class HybridRetriever(BaseRetriever):
         query = str(query)
         all_nodes = postprocessor.postprocess_nodes(nodes=all_nodes,query_bundle=QueryBundle(query_str=query.lower()))
         return all_nodes[0:topk]
- if bm25_flag:
+if bm25_flag:
         hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
-    else:
+else:
         hybrid_retriever=vector_retriever
 llm = OpenAI(model="gpt-4-1106-preview") 
 #llm = OpenAI(model=m[1])
