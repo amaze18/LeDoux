@@ -56,15 +56,24 @@ if "message_history" not in st.session_state.keys():
     st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question from the book!!"),]
 
 indexPath=r"LeDou"
-m=["gpt-4-1106-preview","gpt-4-0125-preview"]
+m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
 embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
 #index=indexgenerator(indexPath,documentsPath)
-vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
-bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+# vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
+# bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+topk= 2
+vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
+bm25_flag = True
+try:
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=topk)
+except:
+    source_nodes = index.docstore.docs.values()
+    nodes = list(source_nodes)
+    bm25_flag = False
 class HybridRetriever(BaseRetriever):
     def __init__(self,vector_retriever, bm25_retriever):
         self.vector_retriever = vector_retriever
@@ -79,7 +88,12 @@ class HybridRetriever(BaseRetriever):
         all_nodes = postprocessor.postprocess_nodes(nodes=all_nodes,query_bundle=QueryBundle(query_str=query.lower()))
         return all_nodes[0:topk]
 
-hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+if bm25_flag:
+    hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+else:
+    hybrid_retriever=vector_retriever
+
+# hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
 
 llm = OpenAI(model="gpt-4-1106-preview") 
 #llm = OpenAI(model=m[1])
