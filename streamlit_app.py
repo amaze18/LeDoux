@@ -70,7 +70,7 @@ vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
 bm25_flag = True
 try:
-    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=8)
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=5)
 except:
     source_nodes = index.docstore.docs.values()
     nodes = list(source_nodes)
@@ -98,13 +98,26 @@ else:
 
 llm = OpenAI("gpt-4o") 
 #llm = OpenAI(model=m[1])
+condense_prompt = (
+  "Given the following conversation between a user and an AI assistant and a follow up question from user,"
+  "rephrase the follow up question to be a standalone question.\n"
+  "Chat History:\n"
+  "{chat_history}"
+  "\nFollow Up Input: {question}"
+  "\nStandalone question:")
+
 #service_context = ServiceContext.from_defaults(llm=llm)
 #embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 service_context = ServiceContext.from_defaults(llm=OpenAI("gpt-4o"))
+message_history=[]
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
+        #response = CondensePlusContextChatEngine.from_defaults(llm=llm,retriever=hybrid_retriever,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE,condense_prompt=condense_prompt,\
+         #                                                              chat_history= message_history).chat(query_str)
+        message_history.append(ChatMessage(role=MessageRole.USER,content=query_str))
+        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
+                                                                       chat_history= message_history).chat(query_str)
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
