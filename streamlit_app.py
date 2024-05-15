@@ -13,6 +13,7 @@ from llama_index.legacy import (StorageContext,load_index_from_storage)
 from llama_index.legacy.core.llms.types import ChatMessage, MessageRole
 from llama_index.legacy.schema import QueryBundle
 from openai import OpenAI
+import openai
 import os
 from index import indexgenerator
 
