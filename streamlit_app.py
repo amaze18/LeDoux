@@ -125,6 +125,12 @@ if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
+if "messages" not in st.session_state.keys(): # Initialize the chat messages history
+        st.session_state.messages = [{"role": "assistant", "content": "Ask me a question from this  book!!"}]
+if "message_history" not in st.session_state.keys():
+        st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question form this book"),]
+ 
+
 for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
