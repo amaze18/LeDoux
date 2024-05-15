@@ -70,7 +70,7 @@ vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
 bm25_flag = True
 try:
-    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=topk)
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=5)
 except:
     source_nodes = index.docstore.docs.values()
     nodes = list(source_nodes)
