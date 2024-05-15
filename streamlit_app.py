@@ -61,7 +61,7 @@ embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 MODEL = "gpt-4o"
 llm = OpenAI(MODEL, temperature=0)
-service_context = ServiceContext.from_defaults(llm=llm)
+storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context, service_context=service_context)
 #index=indexgenerator(indexPath,documentsPath)
 # vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
