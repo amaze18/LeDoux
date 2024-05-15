@@ -57,7 +57,7 @@ if "message_history" not in st.session_state.keys():
 
 indexPath=r"F2B"
 m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
-embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
+embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 MODEL = "gpt-4o"
 llm = OpenAI(MODEL)
