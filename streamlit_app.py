@@ -115,9 +115,12 @@ query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_c
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         #response = CondensePlusContextChatEngine.from_defaults(llm=llm,retriever=hybrid_retriever,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE,condense_prompt=condense_prompt,\
          #                                                              chat_history= message_history).chat(query_str)
+        query_str=prompt
         message_history.append(ChatMessage(role=MessageRole.USER,content=query_str))
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
                                                                        chat_history= message_history).chat(query_str)
+        #st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
+
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
