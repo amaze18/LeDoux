@@ -1,6 +1,3 @@
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
 import streamlit as st
 from llama_index.legacy import ServiceContext
 from llama_index.legacy.llms import OpenAI
@@ -13,6 +10,8 @@ from llama_index.legacy.postprocessor import LongContextReorder
 from llama_index.legacy.embeddings import OpenAIEmbedding
 from llama_index.legacy.schema import MetadataMode
 from llama_index.legacy import (StorageContext,load_index_from_storage)
+from llama_index.legacy.core.llms.types import ChatMessage, MessageRole
+from llama_index.legacy.schema import QueryBundle
 import openai
 import os
 from index import indexgenerator
@@ -53,33 +52,54 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
         {"role": "assistant", "content": "Ask me a question from the book!!"}
     ]
 
+if "message_history" not in st.session_state.keys():
+    st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question from the book!!"),]
+
 indexPath=r"F2B"
-m=["gpt-4-1106-preview","gpt-4-0125-preview"]
-embed_model = OpenAIEmbedding(model="text-embedding-3-large")
+m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
+embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
-index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4-1106-preview", temperature=0),embed_model=embed_model))
+index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4o", temperature=0),embed_model=embed_model))
 #index=indexgenerator(indexPath,documentsPath)
-vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
-bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+# vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
+# bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
+topk= 2
+vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
+bm25_flag = True
+try:
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=topk)
+except:
+    source_nodes = index.docstore.docs.values()
+    nodes = list(source_nodes)
+    bm25_flag = False
 class HybridRetriever(BaseRetriever):
     def __init__(self,vector_retriever, bm25_retriever):
-        self.vector_retriever_2000 = vector_retriever
-        self.bm25_retriever_2000 = bm25_retriever
+        self.vector_retriever = vector_retriever
+        self.bm25_retriever = bm25_retriever
         super().__init__()
 
     def _retrieve(self, query, **kwargs):
-        bm25_nodes = self.bm25_retriever_2000.retrieve(query, **kwargs)
-        vector_nodes = self.vector_retriever_2000.retrieve(query, **kwargs)
+        bm25_nodes = self.bm25_retriever.retrieve(query, **kwargs)
+        vector_nodes = self.vector_retriever.retrieve(query, **kwargs)
         all_nodes = bm25_nodes + vector_nodes
-        return all_nodes
-hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
-llm = OpenAI(model="gpt-4-1106-preview") 
+        query = str(query)
+        all_nodes = postprocessor.postprocess_nodes(nodes=all_nodes,query_bundle=QueryBundle(query_str=query.lower()))
+        return all_nodes[0:topk]
+
+if bm25_flag:
+    hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+else:
+    hybrid_retriever=vector_retriever
+
+# hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
+
+llm = OpenAI(model="gpt-4o") 
 #llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
-service_context = ServiceContext.from_defaults(llm=OpenAI(model=m[1], temperature=0),embed_model=embed_model)
+service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4o", temperature=0),embed_model=embed_model)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE)
@@ -96,9 +116,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             all_nodes  = hybrid_retriever.retrieve(str(prompt))
-            #response = st.session_state.chat_engine.chat(str(prompt))
-            response = st.session_state.chat_engine.chat(prompt)
+            response = st.session_state.chat_engine.chat(str(prompt))
+            #response = st.session_state.chat_engine.chat(prompt)
             st.write(response.response)
             context_str = "\n\n".join([n.node.get_content(metadata_mode=MetadataMode.LLM).strip() for n in all_nodes])
+            st.session_state.message_history.append(ChatMessage(role=MessageRole.ASSISTANT,content=str(response.response)),)
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
