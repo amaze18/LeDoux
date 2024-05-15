@@ -65,12 +65,12 @@ index = load_index_from_storage(storage_context, service_context = ServiceContex
 #index=indexgenerator(indexPath,documentsPath)
 # vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
 # bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
-topk= 4
+topk= 8
 vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
 bm25_flag = True
 try:
-    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=2)
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=4)
 except:
     source_nodes = index.docstore.docs.values()
     nodes = list(source_nodes)
