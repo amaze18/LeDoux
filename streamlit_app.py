@@ -118,7 +118,7 @@ if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         #query_str=prompt
         #message_history.append(ChatMessage(role=MessageRole.USER,content=query_str))
         #st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
-                                                                       chat_history= message_history).chat(query_str)
+                                                      #                 chat_history= message_history).chat(query_str)
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
 
 
