@@ -142,9 +142,15 @@ if st.session_state.messages[-1]["role"] != "assistant":
             all_nodes  = hybrid_retriever.retrieve(str(prompt))
             #response = st.session_state.chat_engine.chat(str(prompt))
             #response = st.session_state.chat_engine.chat(prompt)
-            response = CondensePlusContextChatEngine.from_defaults(query_engine,\
+            try:
+             response = CondensePlusContextChatEngine.from_defaults(query_engine,\
                                                      context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
                                                                    chat_history=st.session_state.message_history).chat(str(prompt))
+            except:
+             response = CondensePlusContextChatEngine.from_defaults(query_engine,\
+                                                     context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1,condense_prompt=condense_prompt,\
+                                                                   ).chat(str(prompt))
+             
             st.write(response.response)
             context_str = "\n\n".join([n.node.get_content(metadata_mode=MetadataMode.LLM).strip() for n in all_nodes])
             st.session_state.message_history.append(ChatMessage(role=MessageRole.ASSISTANT,content=str(response.response)),)
