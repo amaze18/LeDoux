@@ -10,6 +10,7 @@ from llama_index.legacy.postprocessor import LongContextReorder
 from llama_index.legacy.embeddings import OpenAIEmbedding
 from llama_index.legacy.schema import MetadataMode
 from llama_index.legacy import (StorageContext,load_index_from_storage)
+from llama_index.legacy.core.llms.types import ChatMessage, MessageRole
 import openai
 import os
 from index import indexgenerator
