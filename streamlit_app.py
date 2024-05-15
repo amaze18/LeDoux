@@ -22,7 +22,7 @@ st.title("Chat with F2B!! 💬")
 
 
 
-DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
+DEFAULT_CONTEXT_PROMPT_TEMPLATE_1 = """
  You're an AI assistant to help students learn their course material via convertsations.
  The following is a friendly conversation between a user and an AI assistant for answering questions related to query.
  The assistant is talkative and provides lots of specific details in form of bullet points or short paras from the context.
@@ -31,7 +31,7 @@ DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
  Instruction: Based on the above context, provide a detailed answer IN THE USER'S LANGUAGE with logical formation of paragraphs for the user question below.
  """
 
-DEFAULT_CONTEXT_PROMPT_TEMPLATE = """
+DEFAULT_CONTEXT_PROMPT_TEMPLATE_2 = """
   The following is a friendly conversation between a user and an AI assistant.
   The assistant is talkative and provides lots of specific details from its context only.
   Here are the relevant documents for the context:
@@ -102,7 +102,7 @@ embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4o", temperature=0),embed_model=embed_model)
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE)
+        st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
