@@ -64,7 +64,7 @@ index = load_index_from_storage(storage_context,service_context = ServiceContext
 #index=indexgenerator(indexPath,documentsPath)
 # vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
 # bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
-topk= 2
+topk= 8
 vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
 bm25_flag = True
