@@ -1,6 +1,6 @@
 import streamlit as st
 from llama_index.legacy import ServiceContext
-from llama_index.legacy.llms import OpenAI
+from llama_index.llms.openai import OpenAI
 from llama_index.legacy.retrievers import BM25Retriever
 from llama_index.legacy.retrievers import VectorIndexRetriever
 from llama_index.legacy.retrievers import BaseRetriever
@@ -58,9 +58,10 @@ if "message_history" not in st.session_state.keys():
 indexPath=r"LeDou"
 m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
 embed_model = OpenAIEmbedding(model="text-embedding-ada-002")
+llm = OpenAI("gpt-4o") 
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
-index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=openai.OpenAI("gpt-4-0125-preview", temperature=0),embed_model=embed_model))
+index = load_index_from_storage(storage_context, service_context = ServiceContext.from_defaults(llm=llm))
 #index=indexgenerator(indexPath,documentsPath)
 # vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
 # bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
@@ -95,11 +96,11 @@ else:
 
 # hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
 
-llm = openai.OpenAI("gpt-4-0125-preview") 
+llm = OpenAI("gpt-4o") 
 #llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
-service_context = ServiceContext.from_defaults(llm=openai.OpenAI("gpt-4-0125-preview", temperature=0),embed_model=embed_model)
+service_context = ServiceContext.from_defaults(llm=OpenAI("gpt-4o"))
 query_engine=RetrieverQueryEngine.from_args(retriever=hybrid_retriever,service_context=service_context,verbose=True)
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
         st.session_state.chat_engine = CondensePlusContextChatEngine.from_defaults(query_engine,context_prompt=DEFAULT_CONTEXT_PROMPT_TEMPLATE_1)
