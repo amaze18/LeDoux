@@ -62,7 +62,7 @@ embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 MODEL = "gpt-4o"
 llm = OpenAI(MODEL)
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
-index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=llm))
+index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=llm),embed_model=embed_model)
 #index=indexgenerator(indexPath,documentsPath)
 # vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
 # bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
