@@ -64,14 +64,14 @@ llm = OpenAI(MODEL)
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=llm),embed_model=embed_model)
 #index=indexgenerator(indexPath,documentsPath)
-# vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
+vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=5)
 # bm25_retriever = BM25Retriever.from_defaults(index=index, similarity_top_k=2)
-topk= 2
-vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
+# topk= 2
+# vector_retriever = VectorIndexRetriever(index=index,similarity_top_k=topk)
 postprocessor = LongContextReorder()
 bm25_flag = True
 try:
-    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=topk)
+    bm25_retriever = BM25Retriever.from_defaults(index=index,similarity_top_k=2)
 except:
     source_nodes = index.docstore.docs.values()
     nodes = list(source_nodes)
