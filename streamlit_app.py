@@ -55,7 +55,7 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
 if "message_history" not in st.session_state.keys():
     st.session_state.message_history=[ChatMessage(role=MessageRole.ASSISTANT,content="Ask me a question from the book!!"),]
 
-indexPath=r"LeDou"
+indexPath=r"LeDoux"
 m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 llm = OpenAI("gpt-4o") 
