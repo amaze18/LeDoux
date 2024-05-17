@@ -59,7 +59,7 @@ indexPath=r"F2B"
 m=["gpt-4-1106-preview","gpt-4-0125-preview","gpt-4o"]
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
 #documentsPath=r"FinTech for Billions - Bhagwan Chowdhry & Syed Anas Ahmed.pdf"
-MODEL = "gpt-4o"
+MODEL = "gpt-4-0125-preview"
 llm = OpenAI(MODEL)
 storage_context = StorageContext.from_defaults(persist_dir=indexPath)
 index = load_index_from_storage(storage_context,service_context = ServiceContext.from_defaults(llm=llm),embed_model=embed_model)
@@ -97,7 +97,6 @@ else:
 
 # hybrid_retriever=HybridRetriever(vector_retriever,bm25_retriever)
 
-llm = OpenAI("gpt-4o") 
 #llm = OpenAI(model=m[1])
 #service_context = ServiceContext.from_defaults(llm=llm)
 embed_model = OpenAIEmbedding(model="text-embedding-3-large")
